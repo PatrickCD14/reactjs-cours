@@ -1,42 +1,16 @@
-/*
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import registerServiceWorker from './registerServiceWorker';
-
-ReactDOM.render(<App />, document.getElementById('root'));
-registerServiceWorker();
-*/
 const express = require("express");
-const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const mongoose = require('mongoose');
 const keys = require('../config/keys');
+
+require('../services/passport');
+
+
+mongoose.connect(keys.mongoURI);
+
 const app = express();
 
-//console.developers.google.com
 
-passport.use(
-    new GoogleStrategy(
-        {
-            clientID: keys.googleClientID,
-            clientSecret: keys.googleClientSecret,
-            callbackURL: '/auth/google/callback'
-        },
-        accessToken => {
-            console.log(accessToken);
-        }
-    )
-);
-
-app.get(
-    '/auth/google',
-    passport.authenticate('google', {
-        scope: ['profile', 'email']
-    })
-);
-
-app.get('/auth/google/callback', passport.authenticate('google'));
+require('../routes/authRoutes')(app);
 
 //détermine le port, en dev le port peut être vide donc par défaut 5000
 const PORT = process.env.PORT || 5000;
